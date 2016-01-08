@@ -1,0 +1,21 @@
+{
+    "name": "airtype/httpmessages",
+    "authors": [
+        {
+            "name": "Wes Rice",
+            "email": "wes@wesrice.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "HttpMessages\\": "src/"
+        }
+    },
+    "require": {
+        "psr/http-message": "^1.0",
+        "fzaninotto/Streamer": "^0.0.1",
+        "relay/relay": "~1.0",
+        "league/uri": "^4.0",
+        "league/route": "2.0.0-RC1"
+    }
+}

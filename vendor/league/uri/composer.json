@@ -1,0 +1,50 @@
+{
+    "name": "league/uri",
+    "type": "library",
+    "description" : "URI manipulation library",
+    "keywords": ["url", "uri", "rfc3986", "psr-7", "parse_url", "http", "ws", "ftp", "data", "data-uri"],
+    "license": "MIT",
+    "homepage": "http://url.thephpleague.com",
+    "authors": [
+        {
+            "name" : "Ignace Nyamagana Butera",
+            "email" : "nyamsprod@gmail.com",
+            "homepage" : "https://github.com/nyamsprod/",
+            "role" : "Developer"
+        }
+    ],
+    "support": {
+        "forum": "https://groups.google.com/forum/#!forum/thephpleague",
+        "issues": "https://github.com/thephpleague/uri/issues"
+    },
+    "require": {
+        "php" : ">=5.5.9",
+        "ext-mbstring" : "*",
+        "ext-intl" : "*",
+        "ext-fileinfo": "*",
+        "psr/http-message": "^1.0",
+        "jeremykendall/php-domain-parser": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "^4.0",
+        "fabpot/php-cs-fixer": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "League\\Uri\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "League\\Uri\\Test\\": "test"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit; vendor/bin/php-cs-fixer fix -v --diff --dry-run;"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.0-dev"
+        }
+    }
+}

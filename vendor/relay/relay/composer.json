@@ -1,0 +1,34 @@
+{
+    "name": "relay/relay",
+    "type": "library",
+    "description": "A PSR-7 middleware dispatcher.",
+    "keywords": [
+        "middleware",
+        "psr-7"
+    ],
+    "homepage": "https://github.com/relayphp/Relay.Relay",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Relay.Relay Contributors",
+            "homepage": "https://github.com/relayphp/Relay.Relay/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "psr/http-message": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Relay\\": "src/"
+        }
+    },
+    "require-dev": {
+        "zendframework/zend-diactoros": "~1.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Relay\\": "tests/"
+        }
+    }
+}
