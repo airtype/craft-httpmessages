@@ -195,7 +195,7 @@ class Request extends Message implements RequestInterface
      * @param bool $preserveHost Preserve the original state of the Host header.
      * @return self
      */
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserve_host = false)
     {
         $new = clone $this;
 
