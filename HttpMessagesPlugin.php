@@ -76,7 +76,7 @@ class HttpMessagesPlugin extends BasePlugin
         $response_service = new ResponseService;
         $response = $response_service->getResponse();
 
-        $config_service = new HttpMessageConfigService($request);
+        $config_service = new HttpMessageConfigService();
         $routes = $config_service->getRoutes();
 
         $router_service = new RouterService($routes);

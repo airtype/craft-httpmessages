@@ -46,24 +46,7 @@ class RouterService
     {
         $router = new RouteCollection();
 
-        foreach ($this->routes as $pattern => $http_methods) {
-            foreach ($http_methods as $method => $middleware) {
-                $route = new Route($method, $pattern, $middleware);
-
-                $router->addRoute($method, $route->getPattern(), function (Request $request, Response $response, $attributes) use ($route) {
-                    $request = $request->withRoute($route);
-                    $request = $request->withAttributes($attributes);
-
-                    $runner = new Runner($route->getMiddlewareClasses(), function ($class) {
-                        return new $class();
-                    });
-
-                    $response = $runner($request, $response);
-
-                    return $response;
-                });
-            }
-        }
+        $router = $this->addRoutes($router);
 
         $dispatcher = $router->getDispatcher($request);
 
@@ -88,6 +71,50 @@ class RouterService
                 ->send();
 
         }
+    }
+
+    /**
+     * Add Routes
+     *
+     * @param RouteCollection $router Router
+     */
+    private function addRoutes(RouteCollection $router)
+    {
+        foreach ($this->routes as $pattern => $http_methods) {
+            foreach ($http_methods as $method => $middleware) {
+                $router = $this->addRoute($router, $method, $pattern, $middleware);
+            }
+        }
+
+        return $router;
+    }
+
+    /**
+     * Add Route
+     *
+     * @param RouteCollection $router     Router
+     * @param string          $method     Method
+     * @param string          $pattern    Pattern
+     * @param string          $middleware Middleware
+     */
+    private function addRoute(RouteCollection $router, $method, $pattern, $middleware)
+    {
+        $route = new Route($method, $pattern, $middleware);
+
+        $router->addRoute($method, $route->getPattern(), function (Request $request, Response $response, $attributes) use ($route) {
+            $request = $request->withRoute($route);
+            $request = $request->withAttributes($attributes);
+
+            $runner = new Runner($route->getMiddlewareClasses(), function ($class) {
+                return new $class();
+            });
+
+            $response = $runner($request, $response);
+
+            return $response;
+        });
+
+        return $router;
     }
 
     /**

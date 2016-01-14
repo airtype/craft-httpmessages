@@ -2,53 +2,57 @@
 
 namespace HttpMessages\Services;
 
-use HttpMessages\Http\CraftRequest as Request;
 use HttpMessages\Exceptions\HttpMessagesException;
 
 class ConfigService
 {
     /**
-     * Request
+     * Http Methods
      *
-     * @var HttpMessages\Http\CraftRequest
+     * @var [type]
      */
-    protected $request;
+    protected $http_methods = [
+        'GET',
+        'POST',
+        'PUT',
+        'PATCH',
+        'DELETE',
+        'COPY',
+        'HEAD',
+        'OPTIONS',
+        'LINK',
+        'UNLINK',
+        'PURGE',
+        'LOCK',
+        'UNLOCK',
+        'PROPFIND',
+        'VIEW',
+    ];
 
     /**
-     * Registered Middleware
+     * Get Routes
      *
-     * @var array
+     * @return array Routes
      */
-    protected $registered_middleware = [];
-
-    protected $registered_middleware_routes;
-
-    /**
-     * Routes
-     *
-     * @var array
-     */
-    protected $routes = [];
-
-    /**
-     * Construct
-     *
-     * @param Request $request Request
-     */
-    public function __construct(Request $request)
+    public function getRoutes()
     {
-        $this->request = $request;
+        $registered_middleware = $this->getRegisteredMiddleWare();
+        $registered_middleware_routes = $this->transformMiddlewares($registered_middleware);
 
-        $this->registerMiddleware();
-        $this->mergeMiddlewareConfigs();
+        $routes = \Craft\craft()->config->get('routes', 'httpMessages');
+        $routes = $this->transformRoutes($routes);
+
+        $routes = $this->addMiddlewareVariablesToRoutes($routes, $registered_middleware, $registered_middleware_routes);
+
+        return $routes;
     }
 
     /**
-     * Register Middleware
+     * Get Registered Middleware
      *
      * @return void
      */
-    private function registerMiddleWare()
+    private function getRegisteredMiddleWare()
     {
         $middleware = [];
 
@@ -65,118 +69,151 @@ class ConfigService
             $transformed_middleware[$values['handle']]['routes'] = \Craft\craft()->config->get('routes', $plugin);
         }
 
-        $this->registered_middleware = $transformed_middleware;
+        return $transformed_middleware;
     }
 
     /**
-     * Merge Middleware Configs
+     * Transform Middlewares
      *
-     * @return void
+     * @param array $middlewares Middlewares
+     *
+     * @return array Routes
      */
-    private function mergeMiddlewareConfigs()
+    private function transformMiddlewares(array $middlewares)
     {
-        $routes = [];
+        $middleware = [];
 
-        $config_routes = \Craft\craft()->config->get('routes', 'httpMessages');
+        foreach ($middlewares as $handle => $config) {
 
-        $transformed_middleware_routes = [];
-
-        foreach ($this->registered_middleware as $handle => $registered_middleware) {
-
-            if (!$registered_middleware['routes']) {
+            if (!$config['routes']) {
                 continue;
             }
 
-            $transformed_routes = $this->transformRoutes($registered_middleware['routes'], $handle);
+            $transformed_middleware = $this->transformMiddleware($config['routes'], $handle);
 
-            $transformed_middleware_routes = \CMap::mergeArray($transformed_middleware_routes, $transformed_routes);
+            $middleware = \CMap::mergeArray($middleware, $transformed_middleware);
         }
 
-        $this->registered_middleware_routes = $transformed_middleware_routes;
+        return $middleware;
+    }
 
-        $config_routes = $this->transformRoutes($config_routes);
+    /**
+     * Transform Middleware
+     *
+     * @param array  $routes Routes
+     * @param string $handle Handle
+     *
+     * @return array Routes
+     */
+    private function transformMiddleware(array $routes, $handle)
+    {
+        $middleware = [];
 
-        foreach ($config_routes as $pattern => $methods) {
+        foreach ($routes as $pattern => $http_methods) {
+            if (isset($http_methods['default'])) {
+                $default = $http_methods['default'];
+                unset($http_methods['default']);
+            }
+
+            $http_methods = array_change_key_case($http_methods, CASE_UPPER);
+
+            if (isset($default)) {
+                foreach ($this->http_methods as $http_method) {
+                    if (!isset($http_methods[$http_method])) {
+                        $http_methods[$http_method] = $default;
+                    }
+                }
+            }
+
+            $middleware[$pattern] = [
+                $handle => $http_methods
+            ];
+        }
+
+        return $middleware;
+    }
+
+    /**
+     * Transform Routes
+     *
+     * @param array $routes Routes
+     *
+     * @return array Routes
+     */
+    private function transformRoutes(array $routes)
+    {
+        foreach ($routes as $pattern => $http_methods) {
+            if (isset($http_methods['default'])) {
+                $default = $http_methods['default'];
+                unset($http_methods['default']);
+            }
+
+            $http_methods = array_change_key_case($http_methods, CASE_UPPER);
+
+            if (isset($default)) {
+                foreach ($this->http_methods as $http_method) {
+                    if (!isset($http_methods[$http_method])) {
+                        $http_methods[$http_method] = $default;
+                    }
+                }
+            }
+
+            $routes[$pattern] = $http_methods;
+        }
+
+        return $routes;
+    }
+
+    /**
+     * Add Middleware Variables To Routes
+     *
+     * @param array $routes                       Routes
+     * @param array $registered_middleware        Registered Middleware
+     * @param array $registered_middleware_routes Registered Middleware Routes
+     */
+    private function addMiddlewareVariablesToRoutes(array $routes, array $registered_middleware, array $registered_middleware_routes)
+    {
+        foreach ($routes as $pattern => $methods) {
             foreach ($methods as $method => $middleware) {
                 foreach ($middleware as $key => $handle) {
-                    $config_routes[$pattern][$method][$handle]['class'] = $this->registered_middleware[$handle]['class'];
+                    $routes[$pattern][$method][$handle]['class'] = $registered_middleware[$handle]['class'];
 
-                    if ($middleware_variables = $this->getRegisteredMiddlewareVariables($handle, $pattern, $method)) {
-                        $config_routes[$pattern][$method][$handle]['variables'] = $middleware_variables;
+                    if ($middleware_variables = $this->getRegisteredMiddlewareVariables($registered_middleware, $registered_middleware_routes, $handle, $pattern, $method)) {
+                        $routes[$pattern][$method][$handle]['variables'] = $middleware_variables;
                     }
 
-                    unset($config_routes[$pattern][$method][$key]);
+                    unset($routes[$pattern][$method][$key]);
                 }
             }
         }
 
-        $this->routes = $config_routes;
+        return $routes;
     }
 
-    private function transformRoutes(array $config_routes, $handle = null)
+    /**
+     * Get Registered Middleware Variables
+     *
+     * @param array $registered_middleware        Registered Middleware
+     * @param array $registered_middleware_routes Registered Middleware Routes
+     * @param string $handle                      Handle
+     * @param string $pattern                     Pattern
+     * @param string $method                      Method
+     *
+     * @return array Variables
+     */
+    private function getRegisteredMiddlewareVariables(array $registered_middleware, array $registered_middleware_routes, $handle, $pattern, $method)
     {
-        $http_methods = [
-            'GET',
-            'POST',
-            'PUT',
-            'PATCH',
-            'DELETE',
-            'COPY',
-            'HEAD',
-            'OPTIONS',
-            'LINK',
-            'UNLINK',
-            'PURGE',
-            'LOCK',
-            'UNLOCK',
-            'PROPFIND',
-            'VIEW',
-        ];
-
-        foreach ($config_routes as $pattern => $config_http_methods) {
-            if (isset($config_http_methods['default'])) {
-                $default_middleware = $config_http_methods['default'];
-                unset($config_http_methods['default']);
-            }
-
-            $config_http_methods = array_change_key_case($config_http_methods, CASE_UPPER);
-
-            if (isset($default_middleware)) {
-                foreach ($http_methods as $http_method) {
-                    if (!isset($config_http_methods[$http_method])) {
-                        $config_http_methods[$http_method] = $default_middleware;
-                    }
-                }
-            }
-
-            if ($handle) {
-                $config_routes[$pattern] = [$handle => $config_http_methods];
-            } else {
-                $config_routes[$pattern] = $config_http_methods;
-            }
-
-        }
-
-        return $config_routes;
-    }
-
-    private function getRegisteredMiddlewareVariables($handle, $pattern, $method)
-    {
-        if (!array_key_exists($handle, $this->registered_middleware)) {
+        if (!array_key_exists($handle, $registered_middleware)) {
             $exception = new HttpMessagesException();
             $exception->setMessage(sprintf('Middleware with the handle `%s` is not defined.', $handle));
             throw $exception;
         }
 
-        if (!isset($this->registered_middleware_routes[$pattern][$handle][$method])) {
-            return null;
+        if (!isset($registered_middleware_routes[$pattern][$handle][$method])) {
+            return [];
         }
 
-        return $this->registered_middleware_routes[$pattern][$handle][$method];
+        return $registered_middleware_routes[$pattern][$handle][$method];
     }
 
-    public function getRoutes()
-    {
-        return $this->routes;
-    }
 }
