@@ -172,7 +172,7 @@ class RequestService
      */
     private function withParsedBody(Request $request)
     {
-        if (in_array($request->getHeaderLine('Content-Type'), ['application/x-www-form-urlencoded', 'multipart/form-data']) && $this->method === 'POST') {
+        if (in_array($request->getHeaderLine('Content-Type'), ['application/x-www-form-urlencoded', 'multipart/form-data']) && $request->getMethod() === 'POST') {
             $parsed_body = $_POST;
         } else {
             mb_parse_str($request->getBody()->getContents(), $parsed_body);
