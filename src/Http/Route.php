@@ -19,29 +19,22 @@ class Route
     protected $pattern;
 
     /**
-     * Middleware
-     *
-     * @var array
-     */
-    protected $middleware;
-
-    /**
      * Config
      *
      * @var array
      */
-    protected $config = [];
+    protected $middleware = [];
 
     /**
      * Constructor
      *
      * @param array $config Config
      */
-    public function __construct($method, $pattern, array $config)
+    public function __construct($method, $pattern, array $middleware)
     {
         $this->method  = $method;
         $this->pattern = $pattern;
-        $this->config  = $config;
+        $this->middleware  = $middleware;
     }
 
     /**
@@ -65,16 +58,32 @@ class Route
     }
 
     /**
-     * Get Middleware Config
+     * Get Middleware Classes
+     *
+     * @return array Middleware Classes
+     */
+    public function getMiddlewareClasses()
+    {
+        $classes = [];
+
+        foreach ($this->middleware as $middleware) {
+            $classes[] = $middleware['class'];
+        }
+
+        return $classes;
+    }
+
+    /**
+     * Get Middleware Variable
      *
      * @param string $key        Key
      * @param string $middleware Middleware
      *
-     * @return mixed Middleware Config
+     * @return mixed Middleware Variable
      */
-    public function getMiddlewareConfig($key, $middleware)
+    public function getMiddlewareVariable($key, $middleware)
     {
-        return $this->config['middleware'][$middleware][$key];
+        return $this->middleware[$middleware]['variables'][$key];
     }
 
     /**

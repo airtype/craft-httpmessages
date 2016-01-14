@@ -4,9 +4,10 @@ namespace Craft;
 
 Craft::import('plugins.httpmessages.vendor.autoload', true);
 
-use HttpMessages\Services\RouterService;
 use HttpMessages\Services\RequestService;
 use HttpMessages\Services\ResponseService;
+use HttpMessages\Services\ConfigService as HttpMessageConfigService;
+use HttpMessages\Services\RouterService;
 use HttpMessages\Http\CraftRouter as Router;
 use RestfulApi\Exceptions\RestfulApiException;
 
@@ -75,7 +76,9 @@ class HttpMessagesPlugin extends BasePlugin
         $response_service = new ResponseService;
         $response = $response_service->getResponse();
 
-        $routes = craft()->config->get('routes', 'httpMessages');
+        $config_service = new HttpMessageConfigService($request);
+        $routes = $config_service->getRoutes();
+
         $router_service = new RouterService($routes);
         $router_service->handle($request, $response);
     }
