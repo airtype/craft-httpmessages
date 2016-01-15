@@ -64,13 +64,7 @@ class Route
      */
     public function getMiddlewareClasses()
     {
-        $classes = [];
-
-        foreach ($this->middleware as $middleware) {
-            $classes[] = $middleware['class'];
-        }
-
-        return $classes;
+        return $this->middleware['middleware'];
     }
 
     /**
@@ -83,7 +77,7 @@ class Route
      */
     public function getMiddlewareVariable($key, $middleware)
     {
-        return $this->middleware[$middleware]['variables'][$key];
+        return $this->middleware[$middleware][$key];
     }
 
     /**

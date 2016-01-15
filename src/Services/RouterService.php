@@ -117,32 +117,4 @@ class RouterService
         return $router;
     }
 
-    /**
-     * Get Middleware
-     *
-     * @param array $config Config
-     *
-     * @return array Middleware
-     */
-    public function getMiddlewareClasses(array $middleware)
-    {
-        if (empty($middleware)) {
-            $exception = new HttpMessagesException();
-            $exception->setMessage('No middleware is defined for this route.');
-            throw $exception;
-        }
-
-        foreach (array_keys($middleware) as $key) {
-            if (isset($this->registered_middleware[$key])) {
-                $middleware[$key] = $this->registered_middleware[$key];
-            } else {
-                $exception = new HttpMessagesException();
-                $exception->setMessage(sprintf('Middleware `%s` is not registered.', $key));
-                throw $exception;
-            }
-        }
-
-        return $middleware;
-    }
-
 }
