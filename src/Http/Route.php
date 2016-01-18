@@ -77,7 +77,7 @@ class Route
      */
     public function getMiddlewareVariable($key, $middleware)
     {
-        return $this->middleware[$middleware][$key];
+        return array_key_exists($key, $this->middleware[$middleware]) ? $this->middleware[$middleware][$key] : null;
     }
 
     /**
