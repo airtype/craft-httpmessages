@@ -2,6 +2,7 @@
 
 namespace Craft;
 
+include('functions.php');
 Craft::import('plugins.httpmessages.vendor.autoload', true);
 
 use HttpMessages\Services\RequestService;
@@ -84,3 +85,5 @@ class HttpMessagesPlugin extends BasePlugin
     }
 
 }
+
+
