@@ -208,7 +208,11 @@ class Message implements MessageInterface
     {
         $new = clone $this;
 
-        $new->headers[$name] = array_merge($this->headers[$name], array_map('trim', explode(',', $value)));
+        if (isset($this->headers[$name])) {
+            $new->headers[$name] = array_merge($this->headers[$name], array_map('trim', explode(',', $value)));
+        } else {
+            $new->headers[$name] = array_map('trim', explode(',', $value));
+        }
 
         return $new;
     }
