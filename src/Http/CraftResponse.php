@@ -74,7 +74,7 @@ class CraftResponse extends Response
     public function writeToBody($body, $type)
     {
         $headers = \Craft\craft()->config->get('headers', 'HttpMessages');
-        $new = $this->withHeaders($headers[$type]);
+        $new = $this->withHeaders(array_merge($this->headers, $headers[$type]));
 
         $new->body->write($body);
         $new->body->rewind();
