@@ -64,11 +64,24 @@ class RequestService
      */
     private function withHeaders(Request $request)
     {
+        $irregular_headers = [
+            'CONTENT_TYPE',
+            'CONTENT_LENGTH',
+            'PHP_AUTH_USER',
+            'PHP_AUTH_PW',
+            'PHP_AUTH_DIGEST',
+            'AUTH_TYPE',
+        ];
+
         $headers = [];
 
         foreach ($_SERVER as $name => $value) {
             if (substr($name, 0, 5) == 'HTTP_') {
-               $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = array_map('trim', explode(',', $value));
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = array_map('trim', explode(',', $value));
+            }
+
+            if (in_array($name, $irregular_headers)) {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $name))))] = array_map('trim', explode(',', $value));
             }
         }
 
@@ -182,6 +195,9 @@ class RequestService
                     break;
                 case 'application/json':
                     $parsed_body = json_decode($request->getBody()->getContents(), true);
+                    break;
+                default:
+                    dd($content_type);
                     break;
             }
         } else {
