@@ -172,8 +172,18 @@ class RequestService
      */
     private function withParsedBody(Request $request)
     {
-        if (in_array($request->getHeaderLine('Content-Type'), ['application/x-www-form-urlencoded', 'multipart/form-data']) && $request->getMethod() === 'POST') {
-            $parsed_body = $_POST;
+        if ($request->getMethod() === 'POST') {
+            $content_type = $this->getContentType($request);
+
+            switch ($content_type) {
+                case 'application/x-www-form-urlencoded':
+                case 'multipart/form-data':
+                    $parsed_body = $_POST;
+                    break;
+                case 'application/json':
+                    $parsed_body = json_decode($request->getBody()->getContents(), true);
+                    break;
+            }
         } else {
             mb_parse_str($request->getBody()->getContents(), $parsed_body);
 
@@ -181,6 +191,24 @@ class RequestService
         }
 
         return $request->withParsedBody($parsed_body);
+    }
+
+    /**
+     * Get Content Type
+     *
+     * @return string Content Type
+     */
+    private function getContentType(Request $request)
+    {
+        $content_type = $request->getHeaderLine('Content-Type');
+
+        if (!$content_type) {
+            return null;
+        }
+
+        $content_type_parts = preg_split('/\s*[;,]\s*/', $content_type);
+
+        return strtolower($content_type_parts[0]);
     }
 
     /**
