@@ -25,11 +25,23 @@ class CraftRequest extends ServerRequest
      *
      * @param string $key Key
      *
-     * @return mixed Param
+     * @return mixed Query Param
      */
     public function getQueryParam($key)
     {
         return isset($this->query_params[$key]) ? $this->query_params[$key] : null;
+    }
+
+    /**
+     * Get Param
+     *
+     * @param string $key Key
+     *
+     * @return mixed Param
+     */
+    public function getParam($key)
+    {
+        return isset($this->parsed_body[$key]) ? $this->parsed_body[$key] : null;
     }
 
     /**
