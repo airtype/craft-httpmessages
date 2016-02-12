@@ -185,25 +185,20 @@ class RequestService
      */
     private function withParsedBody(Request $request)
     {
-        if ($request->getMethod() === 'POST') {
-            $content_type = $this->getContentType($request);
+        $content_type = $this->getContentType($request);
 
-            switch ($content_type) {
-                case 'application/x-www-form-urlencoded':
-                case 'multipart/form-data':
-                    $parsed_body = $_POST;
-                    break;
-                case 'application/json':
-                    $parsed_body = json_decode($request->getBody()->getContents(), true);
-                    break;
-                default:
-                    dd($content_type);
-                    break;
-            }
-        } else {
-            mb_parse_str($request->getBody()->getContents(), $parsed_body);
+        switch ($content_type) {
+            case 'application/x-www-form-urlencoded':
+            case 'multipart/form-data':
+                $parsed_body = $_POST;
+                break;
+            case 'application/json':
+                $parsed_body = json_decode($request->getBody()->getContents(), true);
+                break;
+            default:
+                mb_parse_str($request->getBody()->getContents(), $parsed_body);
 
-            $parsed_body = $parsed_body;
+                $parsed_body = $parsed_body;
         }
 
         return $request->withParsedBody($parsed_body);
