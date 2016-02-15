@@ -32,9 +32,9 @@ class Route
      */
     public function __construct($method, $pattern, array $middleware)
     {
-        $this->method  = $method;
-        $this->pattern = $pattern;
-        $this->middleware  = $middleware;
+        $this->method     = $method;
+        $this->pattern    = $pattern;
+        $this->middleware = $middleware;
     }
 
     /**
@@ -78,6 +78,18 @@ class Route
     public function getMiddlewareVariable($key, $middleware)
     {
         return array_key_exists($key, $this->middleware[$middleware]) ? $this->middleware[$middleware][$key] : null;
+    }
+
+    /**
+     * Get Middleware Config
+     *
+     * @param string $middleware Middleware
+     *
+     * @return array Middleware Config
+     */
+    public function getMiddlewareConfig($middleware)
+    {
+        return $this->middleware[$middleware];
     }
 
     /**
