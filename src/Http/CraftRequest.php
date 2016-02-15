@@ -34,6 +34,16 @@ class CraftRequest extends ServerRequest
     }
 
     /**
+     * Get Params
+     *
+     * @return array Params
+     */
+    public function getParams()
+    {
+        return $this->parsed_body;
+    }
+
+    /**
      * Get Param
      *
      * @param string $key     Key
