@@ -38,7 +38,13 @@ class ConfigService
     {
         $registered_middleware = $this->getRegisteredMiddleWare();
 
-        $routes = \Craft\craft()->config->get('routes', 'httpMessages');
+        $routes = [];
+
+        foreach (craft()->plugins->call('registerHttpMessagesRoutes', $routes) as $plugin => $plugin_routes) {
+            $routes = \CMap::mergeArray($routes, $plugin_routes);
+        }
+
+        $routes = array_merge($routes, craft()->config->get('routes', 'httpMessages'));
 
         foreach ($routes as $pattern => $http_methods) {
             foreach ($http_methods as $http_method => $middlewares) {
