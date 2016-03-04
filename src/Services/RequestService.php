@@ -172,7 +172,7 @@ class RequestService
         $files = [];
 
         foreach ($_FILES as $file) {
-            $files[] = new UploadedFile($file);
+            // $files[] = new UploadedFile($file);
         }
 
         return $request->withUploadedFiles($files);
