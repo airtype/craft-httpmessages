@@ -16,4 +16,4 @@ Currently, all commits are being applied to the master branch. Once a stable rel
 * [ ] Request factory should be wrappers around `CHttpRequest`
 * [ ] Use native Yii routing instead of FastRoute
 * [ ] Execute after all other plugins have initialized
-* [ ] Explore utilizing [PSR-7 Middlewars](https://github.com/oscarotero/psr7-middlewares)
+* [ ] Explore utilizing [PSR-7 Middlewares](https://github.com/oscarotero/psr7-middlewares)
