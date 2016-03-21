@@ -102,15 +102,6 @@ class ServerRequest extends Request implements ServerRequestInterface
         return $this->server_params;
     }
 
-    public function withServerParams($server_params)
-    {
-        $new = clone $this;
-
-        $new->server_params = $server_params;
-
-        return $new;
-    }
-
     /**
      * Retrieve cookies.
      *
@@ -350,15 +341,6 @@ class ServerRequest extends Request implements ServerRequestInterface
         $new = clone $this;
 
         $new->attributes[$name] = $value;
-
-        return $new;
-    }
-
-    public function withAttributes(array $attributes)
-    {
-        $new = clone $this;
-
-        $new->attributes = $attributes;
 
         return $new;
     }
