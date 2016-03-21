@@ -5,8 +5,8 @@ namespace Craft;
 include('functions.php');
 Craft::import('plugins.httpmessages.vendor.autoload', true);
 
-use HttpMessages\Services\RequestService;
-use HttpMessages\Services\ResponseService;
+use HttpMessages\Factories\RequestFactory;
+use HttpMessages\Factories\ResponseFactory;
 use HttpMessages\Services\ConfigService as HttpMessageConfigService;
 use HttpMessages\Services\RouterService;
 use HttpMessages\Http\CraftRouter as Router;
@@ -71,11 +71,8 @@ class HttpMessagesPlugin extends BasePlugin
      */
     public function init()
     {
-        $request_service  = new RequestService;
-        $request = $request_service->getRequest();
-
-        $response_service = new ResponseService;
-        $response = $response_service->getResponse();
+        $request = RequestFactory::create();
+        $response = ResponseFactory::create();
 
         $config_service = new HttpMessageConfigService();
         $routes = $config_service->getRoutes();
