@@ -61,7 +61,7 @@ class CraftRequest extends ServerRequest
      *
      * @param array $headers Headers
      *
-     * @return Request Request
+     * @return CraftRequest Request
      */
     public function withHeaders(array $headers)
     {
@@ -73,27 +73,33 @@ class CraftRequest extends ServerRequest
     }
 
     /**
-     * Get Criteria
+     * With Attributes
      *
-     * @return ElementCriteriaModel Criteria
+     * @param array $attributes Attributes
+     *
+     * @return CraftRequest Request
      */
-    public function getCriteria()
-    {
-        return $this->criteria;
-    }
-
-    /**
-     * With Criteria
-     *
-     * @param ElementCriteriaModel|null $criteria Criteria
-     *
-     * @return Request Request
-     */
-    public function withCriteria(ElementCriteriaModel $criteria = null)
+    public function withAttributes(array $attributes)
     {
         $new = clone $this;
 
-        $new->criteria = $criteria;
+        $new->attributes = $attributes;
+
+        return $new;
+    }
+
+    /**
+     * With Server Params
+     *
+     * @param array $server_params Server Params
+     *
+     * @return CraftRequest Request
+     */
+    public function withServerParams(array $server_params)
+    {
+        $new = clone $this;
+
+        $new->server_params = $server_params;
 
         return $new;
     }
