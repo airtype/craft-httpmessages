@@ -2,8 +2,8 @@
 
 namespace Craft;
 
-include('functions.php');
-Craft::import('plugins.httpmessages.vendor.autoload', true);
+require_once('functions.php');
+require_once(dirname(__FILE__).'/../../../vendor/autoload.php');
 
 use HttpMessages\Factories\RequestFactory;
 use HttpMessages\Factories\ResponseFactory;
