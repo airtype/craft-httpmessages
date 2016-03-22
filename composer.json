@@ -17,6 +17,7 @@
     },
     "require": {
         "airtype/craft-httpmessagesfractalmiddleware": "0.0.0",
+        "airtype/craft-httpmessagesvalidationmiddleware": "dev-master",
         "composer/installers": "~1.0",
         "fzaninotto/Streamer": "^0.0.1",
         "relay/relay": "~1.0",
