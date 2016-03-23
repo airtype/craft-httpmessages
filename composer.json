@@ -1,5 +1,9 @@
 {
     "name": "airtype/craft-httpmessages",
+    "type": "craft-plugin",
+    "extra": {
+        "installer-name": "httpmessages"
+    },
     "authors": [
         {
             "name": "Wes Rice",
@@ -11,11 +15,19 @@
             "HttpMessages\\": "src/"
         }
     },
+    "minimum-stability": "dev",
     "require": {
-        "psr/http-message": "^1.0",
+        "airtype/craft-httpmessagescachemiddleware": "dev-develop",
+        "airtype/craft-httpmessagescommercemiddleware": "dev-develop",
+        "airtype/craft-httpmessagesfractalmiddleware": "dev-develop",
+        "airtype/craft-httpmessagesnewrelicmiddleware": "dev-develop",
+        "airtype/craft-httpmessagesrestmiddleware": "dev-develop",
+        "airtype/craft-httpmessagesvalidationmiddleware": "dev-develop",
+        "composer/installers": "~1.0",
         "fzaninotto/Streamer": "^0.0.1",
         "relay/relay": "~1.0",
         "league/uri": "^4.0",
-        "league/route": "2.0.0-RC1"
+        "league/route": "^2.0.0",
+        "psr/http-message": "^1.0"
     }
 }

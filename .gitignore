@@ -1,1 +1,4 @@
+/craft
+/vendor
 .DS_Store
+composer.lock
