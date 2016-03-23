@@ -20,6 +20,7 @@
         "airtype/craft-httpmessagescachemiddleware": "dev-develop",
         "airtype/craft-httpmessagescommercemiddleware": "dev-develop",
         "airtype/craft-httpmessagesfractalmiddleware": "dev-develop",
+        "airtype/craft-httpmessagesnewrelicmiddleware": "dev-develop",
         "airtype/craft-httpmessagesrestmiddleware": "dev-develop",
         "airtype/craft-httpmessagesvalidationmiddleware": "dev-develop",
         "composer/installers": "~1.0",
