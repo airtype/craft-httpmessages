@@ -9,14 +9,14 @@ class HttpMessagesException extends \CException
      *
      * @var int
      */
-    protected $status_code = 500;
+    protected $status_code = 400;
 
     /**
      * Status Phrase
      *
      * @var string
      */
-    protected $status_phrase = 'Internal Server Error';
+    protected $status_phrase = 'Bad Request';
 
     /**
      * Errors
