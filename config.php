@@ -2,12 +2,21 @@
 
 return [
 
-    'routePrefix' => 'relay',
+    // 'routePrefix' => 'relay',
 
-    'defaultHeaders' => [
-        'Content-Type' => [
-            'text/html; charset=utf-8',
-        ],
+    // 'defaultHeaders' => [
+    //     'Content-Type' => [
+    //         'text/html; charset=utf-8',
+    //     ],
+    // ],
+
+    'registeredMiddleware' => [
+        'cache'      => 'HttpMessagesCacheMiddleware\\Middleware\\CacheMiddleware',
+        'commerce'   => 'HttpMessagesCommerceMiddleware\\Middleware\\CommerceMiddleware',
+        'fractal'    => 'HttpMessagesFractalMiddleware\\Middleware\\FractalMiddleware',
+        'new-relic'  => 'HttpMessagesNewRelicMiddleware\\Middleware\\NewRelicMiddleware',
+        'rest'       => 'HttpMessagesRestMiddleware\\Middleware\\RestMiddleware',
+        'validation' => 'HttpMessagesValidationMiddleware\\Middleware\\ValidationMiddleware',
     ],
 
     'headers' => [

@@ -66,11 +66,11 @@ class ConfigService
     {
         $middleware = [];
 
-        foreach (\Craft\craft()->plugins->call('registerHttpMessagesMiddlewareHandle', $middleware) as $plugin => $handle) {
+        foreach (craft()->plugins->call('registerHttpMessagesMiddlewareHandle', $middleware) as $plugin => $handle) {
             $middleware = \CMap::mergeArray($middleware, [$plugin => ['handle' => $handle]]);
         }
 
-        foreach (\Craft\craft()->plugins->call('registerHttpMessagesMiddlewareClass', $middleware) as $plugin => $class) {
+        foreach (craft()->plugins->call('registerHttpMessagesMiddlewareClass', $middleware) as $plugin => $class) {
             $middleware = \CMap::mergeArray($middleware, [$plugin => ['class' => $class]]);
         }
 
@@ -78,6 +78,8 @@ class ConfigService
             $middleware[$values['handle']] = $values['class'];
             unset($middleware[$plugin]);
         }
+
+        $middleware = array_merge($middleware, craft()->config->get('registeredMiddleware', 'httpmessages'));
 
         return $middleware;
     }
