@@ -1,5 +1,7 @@
 <?php
 
+namespace Craft;
+
 $config = [
 
     // 'routePrefix' => 'relay',
