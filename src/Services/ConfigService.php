@@ -37,14 +37,15 @@ class ConfigService
     public function getRoutes()
     {
         $registered_middleware = $this->getRegisteredMiddleWare();
+        $registered_applications = $this->getRegisteredApplications();
+
+        $registered_middleware = array_merge($registered_middleware, $registered_applications);
 
         $routes = [];
 
         foreach (craft()->plugins->call('registerHttpMessagesRoutes', $routes) as $plugin => $plugin_routes) {
             $routes = \CMap::mergeArray($routes, $plugin_routes);
         }
-
-        $routes = array_merge($routes, craft()->config->get('routes', 'httpMessages'));
 
         foreach ($routes as $pattern => $http_methods) {
             foreach ($http_methods as $http_method => $middlewares) {
@@ -82,6 +83,31 @@ class ConfigService
         $middleware = array_merge($middleware, craft()->config->get('registeredMiddleware', 'httpmessages'));
 
         return $middleware;
+    }
+
+    /**
+     * Get Registered Applications
+     *
+     * @return array Registered Applications
+     */
+    private function getRegisteredApplications()
+    {
+        $applications = [];
+
+        foreach (craft()->plugins->call('registerHttpMessagesApplicationHandle', $applications) as $plugin => $handle) {
+            $applications = \CMap::mergeArray($applications, [$plugin => ['handle' => $handle]]);
+        }
+
+        foreach (craft()->plugins->call('registerHttpMessagesApplicationClass', $applications) as $plugin => $class) {
+            $applications = \CMap::mergeArray($applications, [$plugin => ['class' => $class]]);
+        }
+
+        foreach ($applications as $plugin => $values) {
+            $applications[$values['handle']] = $values['class'];
+            unset($applications[$plugin]);
+        }
+
+        return $applications;
     }
 
 }

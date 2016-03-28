@@ -1,6 +1,6 @@
 <?php
 
-return [
+$config = [
 
     // 'routePrefix' => 'relay',
 
@@ -61,3 +61,7 @@ return [
     ],
 
 ];
+
+foreach ($config as $key => $value) {
+    craft()->config->set($key, $value, 'httpmessages');
+}
