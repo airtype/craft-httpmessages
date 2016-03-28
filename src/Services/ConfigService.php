@@ -80,7 +80,9 @@ class ConfigService
             unset($middleware[$plugin]);
         }
 
-        $middleware = array_merge($middleware, craft()->config->get('registeredMiddleware', 'httpmessages'));
+        if($default_middleware = craft()->config->get('registeredMiddleware', 'httpmessages')) {
+            $middleware = array_merge($middleware, $default_middleware);
+        }
 
         return $middleware;
     }
