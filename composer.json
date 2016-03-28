@@ -10,7 +10,7 @@
         "psr-4": {
             "HttpMessages\\": "src/"
         },
-        "files": ["config.php", "functions.php"]
+        "files": ["functions.php", "config.php"]
     },
     "minimum-stability": "dev",
     "require": {
