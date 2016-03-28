@@ -13,4 +13,3 @@ if (!function_exists('craft')) {
         return \Craft\craft();
     }
 }
-
