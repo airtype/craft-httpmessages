@@ -1,26 +1,27 @@
 <?php
 
-namespace Craft;
+return [
 
-$config = [
-
-    // 'routePrefix' => 'relay',
-
-    // 'defaultHeaders' => [
-    //     'Content-Type' => [
-    //         'text/html; charset=utf-8',
-    //     ],
-    // ],
-
+    /**
+     * Registered Middleware
+     *
+     * Create a class map using the middleware's `handle` as a key and the middleware
+     * class as the value. Middleware can also be registered with the
+     * `registerHttpMessageMiddlewareHandle` and `registerHttpMessagesMiddlewareClass` hooks
+     * in a plugin.
+     *
+     */
     'registeredMiddleware' => [
-        'cache'      => 'HttpMessagesCacheMiddleware\\Middleware\\CacheMiddleware',
-        'commerce'   => 'HttpMessagesCommerceMiddleware\\Middleware\\CommerceMiddleware',
-        'fractal'    => 'HttpMessagesFractalMiddleware\\Middleware\\FractalMiddleware',
-        'new-relic'  => 'HttpMessagesNewRelicMiddleware\\Middleware\\NewRelicMiddleware',
-        'rest'       => 'HttpMessagesRestMiddleware\\Middleware\\RestMiddleware',
+        'cache'      => 'Craft\\HttpMessages_CacheMiddleware',
+        'fractal'    => 'Craft\\HttpMessages_FractalMiddleware',
         'validation' => 'HttpMessagesValidationMiddleware\\Middleware\\ValidationMiddleware',
     ],
 
+    /**
+     * Default Headers
+     *
+     * The default headers to be attached to http responses for various content types.
+     */
     'headers' => [
 
         'html' => [
@@ -53,17 +54,4 @@ $config = [
 
     ],
 
-    'routes' => [
-        'api/order' => [
-            'middleware' => ['fractal'],
-            'config' => [
-                'commerce' => [],
-            ],
-        ],
-    ],
-
 ];
-
-foreach ($config as $key => $value) {
-    craft()->config->set($key, $value, 'httpmessages');
-}

@@ -1,8 +1,8 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
-class Route
+class HttpMessages_Route
 {
     /**
      * Method
@@ -26,15 +26,37 @@ class Route
     protected $middleware = [];
 
     /**
+     * Middleware Classes
+     *
+     * @var array
+     */
+    protected $middlewareClasses = [];
+
+    /**
      * Constructor
      *
-     * @param array $config Config
+     * @param string $method  Method
+     * @param string $pattern Pattern
+     * @param array  $config  Config
      */
-    public function __construct($method, $pattern, array $middleware)
+    public function __construct($method, $pattern, array $config)
     {
         $this->method     = $method;
         $this->pattern    = $pattern;
-        $this->middleware = $middleware;
+
+        $this->middleware = isset($config['middleware']) ? $config['middleware'] : null;
+
+        if (!isset($config['controller'])) {
+            throw new HttpMessages_Exception("A controller must be defined in the `$method $pattern` route definition.");
+        }
+
+        $this->controller = $config['controller'];
+
+        if (!isset($config['method'])) {
+            throw new HttpMessages_Exception("A method must be defined in the `$method $pattern` route definition.");
+        }
+
+        $this->method = $config['method'];
     }
 
     /**
@@ -58,13 +80,35 @@ class Route
     }
 
     /**
+     * Get Controller
+     *
+     * @return string Controller
+     */
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    /**
+     * Get Method
+     *
+     * @return string Method
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
      * Get Middleware Classes
      *
      * @return array Middleware Classes
      */
     public function getMiddlewareClasses()
     {
-        return $this->middleware['middleware'];
+        $middlewareHandles = array_keys($this->middleware);
+
+        return craft()->httpMessages_middleware->getMiddlewareClassesByHandles($middlewareHandles);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
 use Psr\Http\Message\StreamInterface;
 use Streamer\Stream as Streamer;
@@ -12,7 +12,7 @@ use Streamer\Stream as Streamer;
  * a wrapper around the most common operations, including serialization of
  * the entire stream to a string.
  */
-class Stream implements StreamInterface
+class HttpMessages_Stream implements StreamInterface
 {
     /**
      * Streamer

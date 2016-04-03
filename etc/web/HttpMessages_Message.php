@@ -1,6 +1,6 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
@@ -18,7 +18,7 @@ use Streamer\Stream as Streamer;
  * @link http://www.ietf.org/rfc/rfc7230.txt
  * @link http://www.ietf.org/rfc/rfc7231.txt
  */
-class Message implements MessageInterface
+class HttpMessages_Message implements MessageInterface
 {
     /**
      * Protocol Version

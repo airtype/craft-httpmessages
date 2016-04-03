@@ -1,8 +1,8 @@
 <?php
 
-namespace HttpMessages\Exceptions;
+namespace Craft;
 
-class HttpMessagesException extends \CException
+class HttpMessages_Exception extends \CException
 {
     /**
      * Status Code

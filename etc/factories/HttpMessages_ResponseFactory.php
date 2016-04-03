@@ -1,21 +1,21 @@
 <?php
 
-namespace HttpMessages\Factories;
+namespace Craft;
 
-use HttpMessages\Http\CraftResponse;
+use Craft\HttpMessages_CraftResponse as Response;
 use Streamer\Stream as Streamer;
-use HttpMessages\Http\Stream;
+use Craft\HttpMessages_Stream as Stream;
 
-class ResponseFactory
+class HttpMessages_ResponseFactory
 {
     /**
      * Create
      *
-     * @return CraftResponse Response
+     * @return Response Response
      */
     public static function create()
     {
-        $response = new CraftResponse;
+        $response = new Response;
 
         // Message
         $response = self::withProtocolVersion($response);
@@ -34,7 +34,7 @@ class ResponseFactory
      *
      * @return CraftResponse Response
      */
-    private function withProtocolVersion(CraftResponse $response)
+    private function withProtocolVersion(Response $response)
     {
         return $response->withProtocolVersion(craft()->request->getHttpVersion());
     }
@@ -46,7 +46,7 @@ class ResponseFactory
      *
      * @return CraftResponse Response
      */
-    private function withBody(CraftResponse $response)
+    private function withBody(Response $response)
     {
         $streamer = new Streamer(fopen('php://temp', 'w+'));
 
@@ -60,7 +60,7 @@ class ResponseFactory
      *
      * @return CraftResponse Response
      */
-    private function withStatus(CraftResponse $response)
+    private function withStatus(Response $response)
     {
         return $response->withStatus(200);
     }

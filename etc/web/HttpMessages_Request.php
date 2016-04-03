@@ -1,6 +1,6 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -25,7 +25,7 @@ use League\Url\Url;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-class Request extends Message implements RequestInterface
+class HttpMessages_Request extends HttpMessages_Message implements RequestInterface
 {
     /**
      * Request Target

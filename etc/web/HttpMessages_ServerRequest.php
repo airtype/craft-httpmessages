@@ -1,6 +1,6 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -44,7 +44,7 @@ use Streamer\Stream as Streamer;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-class ServerRequest extends Request implements ServerRequestInterface
+class HttpMessages_ServerRequest extends HttpMessages_Request implements ServerRequestInterface
 {
     /**
      * Server Params

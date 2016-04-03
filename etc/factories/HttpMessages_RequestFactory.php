@@ -1,22 +1,22 @@
 <?php
 
-namespace HttpMessages\Factories;
+namespace Craft;
 
-use HttpMessages\Http\CraftRequest;
+use Craft\HttpMessages_CraftRequest as Request;
 use Streamer\Stream as Streamer;
-use HttpMessages\Http\Stream;
+use Craft\HttpMessages_Stream as Stream;
 use League\Uri\Schemes\Http as HttpUri;
 
-class RequestFactory
+class HttpMessages_RequestFactory
 {
     /**
      * Create
      *
-     * @return CraftRequest Request
+     * @return Request Request
      */
     public static function create()
     {
-        $request  = new CraftRequest();
+        $request  = new Request();
 
         // Message
         $request = self::withProtocolVersion($request);
@@ -46,7 +46,7 @@ class RequestFactory
      *
      * @return void
      */
-    private function withProtocolVersion(CraftRequest $request)
+    private function withProtocolVersion(Request $request)
     {
         return $request->withProtocolVersion(craft()->request->getHttpVersion());
     }
@@ -56,7 +56,7 @@ class RequestFactory
      *
      * @return void
      */
-    private function withHeaders(CraftRequest $request)
+    private function withHeaders(Request $request)
     {
         $irregular_headers = [
             'CONTENT_TYPE',
@@ -89,11 +89,11 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withBody(CraftRequest $request)
+    private function withBody(Request $request)
     {
         $streamer = new Streamer(fopen('php://input', 'r'));
 
-        return $request->withBody(new Stream($streamer));
+        return $request->withBody(new HttpMessages_Stream($streamer));
     }
 
     /**
@@ -103,7 +103,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withRequestTarget(CraftRequest $request)
+    private function withRequestTarget(Request $request)
     {
         return $request->withRequestTarget(craft()->request->getUrl());
     }
@@ -115,7 +115,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withMethod(CraftRequest $request)
+    private function withMethod(Request $request)
     {
         return $request->withMethod(craft()->request->getRequestType());
     }
@@ -127,7 +127,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withUri(CraftRequest $request)
+    private function withUri(Request $request)
     {
         $uri = HttpUri::createFromServer($_SERVER);
 
@@ -141,7 +141,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withServerParams(CraftRequest $request)
+    private function withServerParams(Request $request)
     {
         return $request->withServerParams($_SERVER);
     }
@@ -153,7 +153,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withCookieParams(CraftRequest $request)
+    private function withCookieParams(Request $request)
     {
         return $request->withCookieParams($_COOKIE);
     }
@@ -165,7 +165,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withQueryParams(CraftRequest $request)
+    private function withQueryParams(Request $request)
     {
         return $request->withQueryParams(craft()->request->getQuery());
     }
@@ -177,7 +177,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withUploadedFiles(CraftRequest $request)
+    private function withUploadedFiles(Request $request)
     {
         $files = [];
 
@@ -195,7 +195,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withParsedBody(CraftRequest $request)
+    private function withParsedBody(Request $request)
     {
         return $request->withParsedBody(craft()->request->getRestParams());
     }
@@ -207,7 +207,7 @@ class RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withAttributes(CraftRequest $request)
+    private function withAttributes(Request $request)
     {
         $attributes = craft()->urlManager->getRouteParams()['variables'];
         unset($attributes['matches']);

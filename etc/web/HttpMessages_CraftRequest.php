@@ -1,22 +1,20 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
-use Craft\ElementCriteriaModel;
-
-class CraftRequest extends ServerRequest
+class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
 {
     /**
      * Criteria
      *
-     * @var Craft\ElementCriteriaModel
+     * @var ElementCriteriaModel
      */
     protected $criteria;
 
     /**
      * Route
      *
-     * @var Route
+     * @var HttpMessages_Route
      */
     protected $route;
 
@@ -121,7 +119,7 @@ class CraftRequest extends ServerRequest
      *
      * @return Request Request
      */
-    public function withRoute(Route $route)
+    public function withRoute(HttpMessages_Route $route)
     {
         $new = clone $this;
 

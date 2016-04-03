@@ -1,6 +1,6 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
  * be implemented such that they retain the internal state of the current
  * message and return an instance that contains the changed state.
  */
-class Response extends Message implements ResponseInterface
+class HttpMessages_Response extends HttpMessages_Message implements ResponseInterface
 {
     /**
      * Status Codes
