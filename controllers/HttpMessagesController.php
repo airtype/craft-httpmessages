@@ -35,10 +35,16 @@ class HttpMessagesController extends BaseController
         $config = array_change_key_case($config, CASE_UPPER);
 
         if (!in_array(strtoupper($requestType), array_keys($config))) {
-            die('Invalid Request - 404');
+            $arrayKeysString = implode(', ', array_keys($config));
+
+            throw new HttpMessages_Exception("`$requestType` is not a in the config options for `$pattern`. Possible methods include: `$arrayKeysString`");
         }
 
         $config = $config[$requestType];
+
+        if (isset($config['variables']) && is_array($config['variables'])) {
+            $variables = array_merge($variables, $config['variables']);
+        }
 
         $request = HttpMessages_RequestFactory::create();
 
