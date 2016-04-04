@@ -46,7 +46,7 @@ class HttpMessages_RequestFactory
      *
      * @return void
      */
-    private function withProtocolVersion(Request $request)
+    private static function withProtocolVersion(Request $request)
     {
         return $request->withProtocolVersion(craft()->request->getHttpVersion());
     }
@@ -56,7 +56,7 @@ class HttpMessages_RequestFactory
      *
      * @return void
      */
-    private function withHeaders(Request $request)
+    private static function withHeaders(Request $request)
     {
         $irregular_headers = [
             'CONTENT_TYPE',
@@ -89,7 +89,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withBody(Request $request)
+    private static function withBody(Request $request)
     {
         $streamer = new Streamer(fopen('php://input', 'r'));
 
@@ -103,7 +103,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withRequestTarget(Request $request)
+    private static function withRequestTarget(Request $request)
     {
         return $request->withRequestTarget(craft()->request->getUrl());
     }
@@ -115,7 +115,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withMethod(Request $request)
+    private static function withMethod(Request $request)
     {
         return $request->withMethod(craft()->request->getRequestType());
     }
@@ -127,7 +127,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withUri(Request $request)
+    private static function withUri(Request $request)
     {
         $uri = HttpUri::createFromServer($_SERVER);
 
@@ -141,7 +141,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withServerParams(Request $request)
+    private static function withServerParams(Request $request)
     {
         return $request->withServerParams($_SERVER);
     }
@@ -153,7 +153,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withCookieParams(Request $request)
+    private static function withCookieParams(Request $request)
     {
         return $request->withCookieParams($_COOKIE);
     }
@@ -165,7 +165,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withQueryParams(Request $request)
+    private static function withQueryParams(Request $request)
     {
         return $request->withQueryParams(craft()->request->getQuery());
     }
@@ -177,7 +177,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withUploadedFiles(Request $request)
+    private static function withUploadedFiles(Request $request)
     {
         $files = [];
 
@@ -195,7 +195,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withParsedBody(Request $request)
+    private static function withParsedBody(Request $request)
     {
         return $request->withParsedBody(craft()->request->getRestParams());
     }
@@ -207,7 +207,7 @@ class HttpMessages_RequestFactory
      *
      * @return CraftRequest Request
      */
-    private function withAttributes(Request $request)
+    private static function withAttributes(Request $request)
     {
         $attributes = craft()->urlManager->getRouteParams()['variables'];
         unset($attributes['matches']);

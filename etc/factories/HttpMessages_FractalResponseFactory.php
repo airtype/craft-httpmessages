@@ -14,7 +14,7 @@ class HttpMessages_FractalResponseFactory
      *
      * @return FractalResponse Fractal Response
      */
-    public function create(Response $response)
+    public static function create(Response $response)
     {
         return new FractalResponse($response);
     }

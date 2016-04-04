@@ -34,7 +34,7 @@ class HttpMessages_ResponseFactory
      *
      * @return CraftResponse Response
      */
-    private function withProtocolVersion(Response $response)
+    private static function withProtocolVersion(Response $response)
     {
         return $response->withProtocolVersion(craft()->request->getHttpVersion());
     }
@@ -46,7 +46,7 @@ class HttpMessages_ResponseFactory
      *
      * @return CraftResponse Response
      */
-    private function withBody(Response $response)
+    private static function withBody(Response $response)
     {
         $streamer = new Streamer(fopen('php://temp', 'w+'));
 
@@ -60,7 +60,7 @@ class HttpMessages_ResponseFactory
      *
      * @return CraftResponse Response
      */
-    private function withStatus(Response $response)
+    private static function withStatus(Response $response)
     {
         return $response->withStatus(200);
     }
