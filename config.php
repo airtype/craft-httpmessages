@@ -13,8 +13,9 @@ return [
      */
     'registeredMiddleware' => [
         'cache'      => 'Craft\\HttpMessages_CacheMiddleware',
+        'csrf'       => 'Craft\\HttpMessages_CsrfMiddleware',
         'fractal'    => 'Craft\\HttpMessages_FractalMiddleware',
-        'validation' => 'HttpMessagesValidationMiddleware\\Middleware\\ValidationMiddleware',
+        'validation' => 'Craft\\HttpMessages_ValidationMiddleware',
     ],
 
     /**
