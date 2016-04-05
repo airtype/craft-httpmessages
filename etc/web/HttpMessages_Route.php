@@ -106,7 +106,17 @@ class HttpMessages_Route
      */
     public function getMiddlewareClasses()
     {
-        $middlewareHandles = array_keys($this->middleware);
+        $middlewareHandles = [];
+
+        foreach ($this->middleware as $key => $value) {
+            if (is_string($value)) {
+                $middlewareHandles[] = $value;
+            }
+
+            if (is_array($value)) {
+                $middlewareHandles[] = $key;
+            }
+        }
 
         return craft()->httpMessages_middleware->getMiddlewareClassesByHandles($middlewareHandles);
     }
@@ -121,6 +131,10 @@ class HttpMessages_Route
      */
     public function getMiddlewareVariable($key, $middleware)
     {
+        if (!array_key_exists($middleware, $this->middleware)) {
+            return null;
+        }
+
         return array_key_exists($key, $this->middleware[$middleware]) ? $this->middleware[$middleware][$key] : null;
     }
 
