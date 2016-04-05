@@ -18,13 +18,53 @@ class HttpMessages_CsrfMiddleware
      */
     public function __invoke(Request $request, Response $response, callable $next)
     {
-        $controller = $request->getRoute()->getController();
-        $method = $request->getRoute()->getMethod();
+        $this->validateCsrfToken($request);
 
-        $controller = new $controller();
-
-        $response = $controller->$method($request, $response);
+        if ($next) {
+            $response = $next($request, $response);
+        }
 
         return $response;
     }
+
+    /**
+     * Validate Csrf Token
+     *
+     * @param Request $request Request
+     *
+     * @return void|HttMessages_Exception
+     */
+    private function validateCsrfToken(Request $request)
+    {
+        $submittedToken = $this->getSubmittedToken($request);
+
+        $validToken = craft()->request->getCsrfToken();
+
+        if ($submittedToken !== $validToken) {
+            throw new HttpMessages_Exception("Csrf token mismatch.");
+        }
+    }
+
+    /**
+     * Get Submitted Token
+     *
+     * @param Request $request Request
+     *
+     * @return void|HttMessages_Exception
+     */
+    private function getSubmittedToken(Request $request)
+    {
+        $csrfTokenName = craft()->config->get('csrfTokenName');
+
+        if ($request->hasHeader($csrfTokenName)) {
+            return $request->getHeader($csrfTokenName)[0];
+        }
+
+        if ($token = $request->getParam($csrfTokenName)) {
+            return $token;
+        }
+
+        throw new HttpMessages_Exception("A valid csrf token was not submitted with your request.");
+    }
+
 }
