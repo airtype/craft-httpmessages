@@ -10,9 +10,13 @@ use Respect\Validation\Exceptions\NestedValidationException;
 class ValidationMiddleware
 {
     /**
-     * Invoke
+     * __invoke Magic Method
      *
-     * @return void
+     * @param Request  $request  Request
+     * @param Response $response Response
+     * @param callable $next     Next
+     *
+     * @return Response Response
      */
     public function __invoke(Request $request, Response $response, callable $next)
     {
