@@ -8,6 +8,21 @@ use Craft\HttpMessages_CraftResponse as Response;
 class HttpMessages_CsrfMiddleware
 {
     /**
+     * Config
+     *
+     * @var array
+     */
+    protected $config;
+
+    /**
+     * Construct
+     */
+    public function __construct()
+    {
+        $this->config = craft()->httpMessages_config->get('csrf', 'middleware');
+    }
+
+    /**
      * __invoke Magic Method
      *
      * @param Request  $request  Request
@@ -54,7 +69,7 @@ class HttpMessages_CsrfMiddleware
      */
     private function getSubmittedToken(Request $request)
     {
-        $csrfTokenName = craft()->config->get('csrfTokenName');
+        $csrfTokenName = $this->config->get('csrfTokenName');
 
         if ($request->hasHeader($csrfTokenName)) {
             return $request->getHeader($csrfTokenName)[0];
