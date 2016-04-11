@@ -28,18 +28,6 @@ class HttpMessages_FractalResponse extends Response
     protected $criteria;
 
     /**
-     * Constructor
-     *
-     * @param Response $response Response
-     */
-    public function __construct(Response $response)
-    {
-        foreach (get_object_vars($response) as $property => $value) {
-            $this->$property = $value;
-        }
-    }
-
-    /**
      * Get Collection
      *
      * @return array Collection

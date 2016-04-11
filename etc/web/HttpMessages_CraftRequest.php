@@ -2,15 +2,10 @@
 
 namespace Craft;
 
-class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
-{
-    /**
-     * Criteria
-     *
-     * @var ElementCriteriaModel
-     */
-    protected $criteria;
+use Zend\Diactoros\ServerRequest;
 
+class HttpMessages_CraftRequest extends ServerRequest
+{
     /**
      * Route
      *
@@ -81,7 +76,9 @@ class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
     {
         $new = clone $this;
 
-        $new->attributes = $attributes;
+        foreach ($attributes as $key => $value){
+            $new = $new->withAttribute($key, $value);
+        }
 
         return $new;
     }

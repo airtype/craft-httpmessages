@@ -2,7 +2,9 @@
 
 namespace Craft;
 
-class HttpMessages_CraftResponse extends HttpMessages_Response
+use Zend\Diactoros\Response;
+
+class HttpMessages_CraftResponse extends Response
 {
     /**
      * Headers
@@ -76,8 +78,8 @@ class HttpMessages_CraftResponse extends HttpMessages_Response
         $headers = craft()->config->get('headers', 'HttpMessages');
         $new = $this->withHeaders(array_merge($this->headers, $headers[$type]));
 
-        $new->body->write($body);
-        $new->body->rewind();
+        $new->getBody()->write($body);
+        $new->getBody()->rewind();
 
         return $new;
     }

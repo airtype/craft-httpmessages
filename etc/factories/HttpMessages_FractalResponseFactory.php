@@ -16,6 +16,10 @@ class HttpMessages_FractalResponseFactory
      */
     public static function create(Response $response)
     {
-        return new FractalResponse($response);
+        $body    = $response->getBody();
+        $status  = $response->getStatusCode();
+        $headers = $response->getHeaders();
+
+        return new FractalResponse($body, $status, $headers);
     }
 }

@@ -20,40 +20,17 @@ class HttpMessagesController extends BaseController
      */
     public function actionHandle(array $variables = [])
     {
-        // Normalize variables
         unset($variables['matches']);
 
-        $config = $variables['httpMessagesConfig'];
-        unset($variables['httpMessagesConfig']);
+        $routeMethods = $variables['routeMethods'];
+        unset($variables['routeMethods']);
 
-        $pattern = $variables['pattern'];
-        unset($variables['pattern']);
+        $routePattern = $variables['routePattern'];
+        unset($variables['routePattern']);
 
-        // Validate the request type
-        $requestType = craft()->request->getRequestType();
+        $request = craft()->httpMessages_request->getCraftRequest($routeMethods, $routePattern, $variables);
 
-        $config = array_change_key_case($config, CASE_UPPER);
-
-        if (!in_array(strtoupper($requestType), array_keys($config))) {
-            $arrayKeysString = implode(', ', array_keys($config));
-
-            throw new HttpMessages_Exception("`$requestType` is not a in the config options for `$pattern`. Possible methods include: `$arrayKeysString`");
-        }
-
-        $config = $config[$requestType];
-
-        if (isset($config['variables']) && is_array($config['variables'])) {
-            $variables = array_merge($variables, $config['variables']);
-        }
-
-        $request = HttpMessages_RequestFactory::create();
-
-        $route = new HttpMessages_Route($requestType, $pattern, $config);
-
-        $request = $request->withRoute($route);
-        $request = $request->withAttributes($variables);
-
-        $response = HttpMessages_ResponseFactory::create();
+        $response = craft()->httpMessages_response->getCraftResponse();
 
         $response = craft()->httpMessages->handle($request, $response);
 

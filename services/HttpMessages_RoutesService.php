@@ -20,15 +20,15 @@ class HttpMessages_RoutesService extends BaseApplicationComponent
 
         $craft_routes = [];
 
-        foreach ($routes as $pattern => $config) {
+        foreach ($routes as $pattern => $methods) {
             $pattern = ltrim($pattern, '/');
 
             $craft_routes[$pattern] = [
                 'action' => 'httpMessages/handle',
                 'params' => [
                     'variables' => [
-                        'httpMessagesConfig' => $config,
-                        'pattern' => $pattern,
+                        'routeMethods' => $methods,
+                        'routePattern' => $pattern,
                     ],
                 ]
             ];
