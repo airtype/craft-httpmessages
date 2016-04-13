@@ -1,22 +1,22 @@
 <?php
 
-namespace HttpMessages\Exceptions;
+namespace Craft;
 
-class HttpMessagesException extends \CException
+class HttpMessages_Exception extends \CException
 {
     /**
      * Status Code
      *
      * @var int
      */
-    protected $status_code = 500;
+    protected $status_code = 400;
 
     /**
      * Status Phrase
      *
      * @var string
      */
-    protected $status_phrase = 'Internal Server Error';
+    protected $status_phrase = 'Bad Request';
 
     /**
      * Errors

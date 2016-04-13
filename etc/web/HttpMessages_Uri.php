@@ -1,10 +1,10 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
 use Psr\Http\Message\UriInterface;
 
-class Uri implements UriInterface
+class HttpMessages_Uri implements UriInterface
 {
     /**
      * Scheme
