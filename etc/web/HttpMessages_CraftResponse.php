@@ -1,8 +1,8 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
-class CraftResponse extends Response
+class HttpMessages_CraftResponse extends HttpMessages_Response
 {
     /**
      * Headers
@@ -73,7 +73,7 @@ class CraftResponse extends Response
      */
     public function writeToBody($body, $type)
     {
-        $headers = \Craft\craft()->config->get('headers', 'HttpMessages');
+        $headers = craft()->config->get('headers', 'HttpMessages');
         $new = $this->withHeaders(array_merge($this->headers, $headers[$type]));
 
         $new->body->write($body);
@@ -108,7 +108,7 @@ class CraftResponse extends Response
             sprintf('HTTP/%s %d %s', $this->getProtocolVersion(), $this->getStatusCode(), $this->getReasonPhrase())
         ];
 
-        \Craft\HeaderHelper::setHeader($header);
+        HeaderHelper::setHeader($header);
     }
 
     /**
@@ -124,7 +124,7 @@ class CraftResponse extends Response
             $headers[$header] = implode(', ', $values);
         }
 
-        \Craft\HeaderHelper::setHeader($headers);
+        HeaderHelper::setHeader($headers);
     }
 
     /**
@@ -138,7 +138,7 @@ class CraftResponse extends Response
 
         echo $this->getBody()->getContents();
 
-        \Craft\craft()->end();
+        craft()->end();
     }
 
 }

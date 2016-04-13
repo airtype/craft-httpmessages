@@ -2,14 +2,27 @@
 
 return [
 
-    'routePrefix' => 'relay',
-
-    'defaultHeaders' => [
-        'Content-Type' => [
-            'text/html; charset=utf-8',
-        ],
+    /**
+     * Registered Middleware
+     *
+     * Create a class map using the middleware's `handle` as a key and the middleware
+     * class as the value. Middleware can also be registered with the
+     * `registerHttpMessageMiddlewareHandle` and `registerHttpMessagesMiddlewareClass` hooks
+     * in a plugin.
+     *
+     */
+    'registeredMiddleware' => [
+        'cache'      => 'Craft\\HttpMessages_CacheMiddleware',
+        'csrf'       => 'Craft\\HttpMessages_CsrfMiddleware',
+        'fractal'    => 'Craft\\HttpMessages_FractalMiddleware',
+        'validation' => 'Craft\\HttpMessages_ValidationMiddleware',
     ],
 
+    /**
+     * Default Headers
+     *
+     * The default headers to be attached to http responses for various content types.
+     */
     'headers' => [
 
         'html' => [
@@ -40,15 +53,6 @@ return [
             ],
         ],
 
-    ],
-
-    'routes' => [
-        'api/order' => [
-            'middleware' => ['fractal'],
-            'config' => [
-                'commerce' => [],
-            ],
-        ],
     ],
 
 ];

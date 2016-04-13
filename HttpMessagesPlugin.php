@@ -2,16 +2,6 @@
 
 namespace Craft;
 
-require_once('functions.php');
-require_once(dirname(__FILE__).'/../../../vendor/autoload.php');
-
-use HttpMessages\Factories\RequestFactory;
-use HttpMessages\Factories\ResponseFactory;
-use HttpMessages\Services\ConfigService as HttpMessageConfigService;
-use HttpMessages\Services\RouterService;
-use HttpMessages\Http\CraftRouter as Router;
-use RestfulApi\Exceptions\RestfulApiException;
-
 class HttpMessagesPlugin extends BasePlugin
 {
     /**
@@ -55,13 +45,15 @@ class HttpMessagesPlugin extends BasePlugin
     }
 
     /**
-     * Register Http Messages Routes
+     * Register Site Routes
      *
-     * @return array Routes
+     * @return array Site Routes
      */
-    public function registerHttpMessagesRoutes()
+    public function registerSiteRoutes()
     {
-        return craft()->config->get('routes', 'httpMessages');
+        $routes = craft()->httpMessages_routes->getRoutes();
+
+        return $routes;
     }
 
     /**
@@ -71,16 +63,18 @@ class HttpMessagesPlugin extends BasePlugin
      */
     public function init()
     {
-        $request = RequestFactory::create();
-        $response = ResponseFactory::create();
+        Craft::import('plugins.httpmessages.middleware.*', true);
+        Craft::import('plugins.httpmessages.etc.*.*', true);
 
-        $config_service = new HttpMessageConfigService();
-        $routes = $config_service->getRoutes();
+        $autoload = dirname(__FILE__) . '/../../../vendor/autoload.php';
 
-        $router_service = new RouterService($routes);
-        $router_service->handle($request, $response);
+        if (!is_file($autoload)) {
+            throw new HttpMessages_Exception("`/vendor/autoload.php` could not be loaded by `craft/plugins/httpmessages/HttpMessagesPlugin.php`. Try running `composer install` in the root of the project.");
+        }
+
+        require_once($autoload);
+
+        craft()->httpMessages_config->loadConfigFiles();
     }
 
 }
-
-

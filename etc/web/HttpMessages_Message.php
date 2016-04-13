@@ -1,6 +1,6 @@
 <?php
 
-namespace HttpMessages\Http;
+namespace Craft;
 
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
@@ -18,7 +18,7 @@ use Streamer\Stream as Streamer;
  * @link http://www.ietf.org/rfc/rfc7230.txt
  * @link http://www.ietf.org/rfc/rfc7231.txt
  */
-class Message implements MessageInterface
+class HttpMessages_Message implements MessageInterface
 {
     /**
      * Protocol Version
@@ -115,7 +115,27 @@ class Message implements MessageInterface
      */
     public function hasHeader($name)
     {
+        $name = $this->normalizeHeaderName($name);
+
         return isset($this->headers[$name]);
+    }
+
+    /**
+     * Normalize Header Names
+     *
+     * @param string $name Name
+     *
+     * @return string Name
+     */
+    private function normalizeHeaderName($name)
+    {
+        $parts = explode('-', $name);
+
+        foreach ($parts as $key => $part) {
+            $parts[$key] = ucwords(strtolower($part));
+        }
+
+        return implode('-', $parts);
     }
 
     /**
@@ -134,6 +154,8 @@ class Message implements MessageInterface
      */
     public function getHeader($name)
     {
+        $name = $this->normalizeHeaderName($name);
+
         return isset($this->headers[$name]) ? $this->headers[$name] : [];
     }
 
@@ -163,7 +185,6 @@ class Message implements MessageInterface
         return implode(', ', $header);
     }
 
-
     /**
      * Return an instance with the provided value replacing the specified header.
      *
@@ -181,6 +202,8 @@ class Message implements MessageInterface
      */
     public function withHeader($name, $value)
     {
+        $name = $this->normalizeHeaderName($name);
+
         $new = clone $this;
 
         $new->headers[$name] = array_map('trim', explode(',', $value));
@@ -206,6 +229,8 @@ class Message implements MessageInterface
      */
     public function withAddedHeader($name, $value)
     {
+        $name = $this->normalizeHeaderName($name);
+
         $new = clone $this;
 
         if (isset($this->headers[$name])) {
@@ -231,6 +256,8 @@ class Message implements MessageInterface
      */
     public function withoutHeader($name)
     {
+        $name = $this->normalizeHeaderName($name);
+
         $new = clone $this;
 
         unset($new->headers[$name]);
