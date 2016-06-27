@@ -25,9 +25,9 @@ class HttpMessages_ConfigService extends BaseApplicationComponent
      */
     public function loadConfigFiles()
     {
-        $this->routes = $this->loadRouteConfigs();
-
         $this->middleware = $this->loadMiddlewareConfigs();
+
+        $this->routes = $this->loadRouteConfigs();
     }
 
     /**
@@ -166,6 +166,16 @@ class HttpMessages_ConfigService extends BaseApplicationComponent
     public function getRoutes()
     {
         return $this->routes;
+    }
+
+    /**
+     * Get Middleware
+     *
+     * @return array Middleware
+     */
+    public function getMiddleware()
+    {
+        return $this->middleware;
     }
 
 }

@@ -2,6 +2,13 @@
 
 namespace Craft;
 
+use Psr7Middlewares\Middleware;
+
+use Relay\RelayBuilder;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Stream;
+
 use Relay\Runner;
 
 class HttpMessagesService extends BaseApplicationComponent
@@ -13,11 +20,14 @@ class HttpMessagesService extends BaseApplicationComponent
      */
     public function handle($request, $response)
     {
-        $runner = new Runner($request->getRoute()->getMiddlewareClasses(), function ($class) {
-            return new $class();
-        });
+        $relay = new RelayBuilder();
 
-        return $runner($request, $response);
+        $globalMiddleware = \Craft\craft()->config->get('globalMiddleware', 'httpmessages');
+        $routeMiddleware = $request->getRoute()->getMiddleware();
+
+        $dispatcher = $relay->newInstance(array_merge($globalMiddleware, $routeMiddleware));
+
+        return $dispatcher($request, $response);
     }
 
 }

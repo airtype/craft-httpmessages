@@ -1,6 +1,14 @@
 <?php
 
+use Psr7Middlewares\Middleware;
+
 return [
+
+    'globalMiddleware' => [
+        Middleware::responseTime(),
+
+        Middleware::payload(),
+    ],
 
     /**
      * Registered Middleware

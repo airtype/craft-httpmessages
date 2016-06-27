@@ -46,17 +46,20 @@ class HttpMessagesController extends BaseController
             $variables = array_merge($variables, $config['variables']);
         }
 
-        $request = HttpMessages_RequestFactory::create();
-
         $route = new HttpMessages_Route($requestType, $pattern, $config);
+
+        $server_request = \Zend\Diactoros\ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST);
+        $request = HttpMessages_RequestFactory::fromRequest($server_request);
 
         $request = $request->withRoute($route);
         $request = $request->withAttributes($variables);
 
-        $response = HttpMessages_ResponseFactory::create();
+        $response = new \Zend\Diactoros\Response;
+        $response = HttpMessages_ResponseFactory::fromResponse($response);
 
         $response = craft()->httpMessages->handle($request, $response);
 
         $response->send();
     }
+
 }
