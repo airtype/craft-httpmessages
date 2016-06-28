@@ -7,6 +7,9 @@ use Craft\HttpMessages_CraftResponse as Response;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
+use League\Fractal\TransformerAbstract;
+use League\Fractal\Serializer\SerializerAbstract;
+use League\Fractal\Pagination\PaginatorInterface;
 
 class HttpMessages_FractalMiddleware
 {
@@ -18,11 +21,141 @@ class HttpMessages_FractalMiddleware
     public $config;
 
     /**
+     * Transformer
+     *
+     * @var League\Fractal\TransformerAbstract
+     */
+    public $transformer;
+
+    /**
+     * Serializer
+     *
+     * @var League\Fractal\Serializer\SerializerAbstract
+     */
+    public $serializer;
+
+    /**
+     * Paginator
+     *
+     * @var League\Fractal\Pagination\PaginatorInterface
+     */
+    public $paginator;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->config = craft()->httpMessages_config->get('fractal', 'middleware');
+
+        $defaultSerializer = $this->config->get('defaultSerializer');
+        $serializers = $this->config->get('serializers');
+
+        if ($defaultSerializer && $serializers && isset($serializers[$defaultSerializer])) {
+            $serializer = $serializers[$defaultSerializer];
+
+            $this->setSerializer($serializer);
+        }
+
+        if ($paginator = $this->config->get('paginator')) {
+            $this->setPaginator($paginator);
+        }
+    }
+
+    /**
+     * With Transformer
+     *
+     * @param mixed $transformer Transformer
+     *
+     * @return HttpMessages_FractalMiddleware
+     */
+    public function setTransformer($transformer)
+    {
+        if (is_string($transformer)) {
+            $transformer = new $transformer;
+        }
+
+        if (!$transformer instanceof TransformerAbstract) {
+            throw new HttpMessages_Exception('Transformer is not an instance of `League\Fractal\TransformerAbstract`.');
+        }
+
+        $this->transformer = $transformer;
+
+        return $this;
+    }
+
+    /**
+     * Get Transformer
+     *
+     * @return TransformerAbstract Transformer
+     */
+    public function getTransformer()
+    {
+        return $this->transformer;
+    }
+
+    /**
+     * With Serializer
+     *
+     * @param mixed $serializer Serializer
+     *
+     * @return HttpMessages_FractalMiddleware
+     */
+    public function setSerializer($serializer)
+    {
+        if (is_string($serializer)) {
+            $serializer = new $serializer;
+        }
+
+        if (!$serializer instanceof SerializerAbstract) {
+            throw new HttpMessages_Exception('Serializer is not an instance of `League\Fractal\Serializer\SerializerAbstract`.');
+        }
+
+        $this->serializer = $serializer;
+
+        return $this;
+    }
+
+    /**
+     * Get Serializer
+     *
+     * @return SerializerAbstract Serializer
+     */
+    public function getSerializer()
+    {
+        return $this->serializer;
+    }
+
+    /**
+     * With Paginator
+     *
+     * @param mixed $paginator Paginator
+     *
+     * @return HttpMessages_FractalMiddleware
+     */
+    public function setPaginator($paginator)
+    {
+        if (is_string($paginator)) {
+            $paginator = new $paginator;
+        }
+
+        if (!$paginator instanceof PaginatorInterface) {
+            throw new HttpMessages_Exception('Paginator is not an instance of `League\Fractal\Pagination\PaginatorInterface`.');
+        }
+
+        $this->paginator = $paginator;
+
+        return $this;
+    }
+
+    /**
+     * Get Paginator
+     *
+     * @return PaginatorInterface Paginator
+     */
+    public function getPaginator()
+    {
+        return $this->paginator;
     }
 
     /**
@@ -37,8 +170,6 @@ class HttpMessages_FractalMiddleware
     public function __invoke(Request $request, Response $response, callable $next)
     {
         try {
-            $response = HttpMessages_FractalResponseFactory::create($response);
-
             $response = $next($request, $response);
 
             $response = $this->applyFractal($request, $response);
@@ -94,11 +225,14 @@ class HttpMessages_FractalMiddleware
     private function applyFractal(Request $request, Response $response)
     {
         $fractal = new Manager;
-        $transformer = $this->getTransformer($request);
 
         // if (isset($this->includes)) {
         //     $this->manager->parseIncludes($this->includes);
         // }
+
+        $transformer = $this->transformer;
+        $paginator   = $this->paginator;
+        $serializer  = $this->serializer;
 
         if ($response->getItem()) {
             if ($transformer) {
@@ -115,13 +249,14 @@ class HttpMessages_FractalMiddleware
                 $resource = new Collection($response->getCollection());
             }
 
-            if ($paginator = $this->getPaginator($response)) {
+            if ($paginator && $criteria = $response->getCriteria()) {
+                $paginator = $this->setCriteriaOnPaginator($paginator, $criteria);
+
                 $resource->setPaginator($paginator);
             }
         }
 
         if (isset($resource)) {
-            $serializer = $this->getSerializer($request);
             $fractal->setSerializer($serializer);
 
             $resource = $fractal->createData($resource)->toArray();
@@ -135,67 +270,18 @@ class HttpMessages_FractalMiddleware
     }
 
     /**
-     * Get Transformer
+     * Set Criteria On Paginator
      *
-     * @param Request $request Request
-     *
-     * @return Transformer Transformer
+     * @param PaginatorInterface   $paginator Paginator
+     * @param ElementCriteriaModel $criteria  Criteria
      */
-    private function getTransformer(Request $request)
+    private function setCriteriaOnPaginator(PaginatorInterface $paginator, ElementCriteriaModel $criteria)
     {
-        $transformer = $request->getRoute()->getMiddlewareVariable('transformer', 'fractal');
-
-        return ($transformer) ? new $transformer : null;
-    }
-
-    /**
-     * Get Serializer
-     *
-     * @param Request $request Request
-     *
-     * @return Serializer Serializer
-     */
-    private function getSerializer(Request $request)
-    {
-        $serializers = $this->config->get('serializers');
-
-        $default_serializer = $this->config->get('defaultSerializer');
-
-        if (!isset($serializers[$default_serializer])) {
-            $exception = new HttpMessages_Exception();
-
-            $exception->setMessage(sprintf('The default serializer `%s` does not exist.', $default_serializer));
-
-            throw $exception;
-        }
-
-        $serializer = $serializers[$default_serializer];
-
-        return new $serializer;
-    }
-
-    /**
-     * Get Paginator
-     *
-     * @param Response $response Response
-     *
-     * @return Paginator Paginator
-     */
-    private function getPaginator(Response $response)
-    {
-        if(!$criteria = $response->getCriteria()) {
-            return null;
-        }
-
         if (!$criteria->limit) {
-            return null;
+            return $paginator;
         }
 
-        if (!$paginator = $this->config->get('paginator')) {
-            return null;
-        }
-
-        return new $paginator($criteria);
+        return $paginator->setCriteria($criteria);
     }
 
 }

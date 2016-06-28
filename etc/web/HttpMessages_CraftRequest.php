@@ -2,7 +2,9 @@
 
 namespace Craft;
 
-class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
+use Zend\Diactoros\ServerRequest;
+
+class HttpMessages_CraftRequest extends ServerRequest
 {
     /**
      * Criteria
@@ -28,7 +30,9 @@ class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
      */
     public function getQueryParam($key, $default = null)
     {
-        return isset($this->query_params[$key]) ? $this->query_params[$key] : $default;
+        $query_params = $this->getQueryParams();
+
+        return isset($query_params[$key]) ? $query_params[$key] : $default;
     }
 
     /**
@@ -38,7 +42,7 @@ class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
      */
     public function getParams()
     {
-        return $this->parsed_body;
+        return $this->getParsedBody();
     }
 
     /**
@@ -51,7 +55,9 @@ class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
      */
     public function getParam($key, $default = null)
     {
-        return isset($this->parsed_body[$key]) ? $this->parsed_body[$key] : $default;
+        $parsed_body = $this->getParsedBody();
+
+        return isset($parsed_body[$key]) ? $parsed_body[$key] : $default;
     }
 
     /**
@@ -65,7 +71,9 @@ class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
     {
         $new = clone $this;
 
-        $new->headers = $headers;
+        foreach ($headers as $header => $value) {
+            $new = $new->withHeader($header, $value);
+        }
 
         return $new;
     }
@@ -75,13 +83,15 @@ class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
      *
      * @param array $attributes Attributes
      *
-     * @return CraftRequest Request
+     * @return HttpMessages_CraftRequest Craft Request
      */
     public function withAttributes(array $attributes)
     {
         $new = clone $this;
 
-        $new->attributes = $attributes;
+        foreach ($attributes as $attribute => $value) {
+            $new = $new->withAttribute($attribute, $value);
+        }
 
         return $new;
     }
@@ -124,6 +134,8 @@ class HttpMessages_CraftRequest extends HttpMessages_ServerRequest
         $new = clone $this;
 
         $new->route = $route;
+
+        $new = $new->withAttributes($route->getVariables());
 
         return $new;
     }
