@@ -135,6 +135,8 @@ class HttpMessages_CraftRequest extends ServerRequest
 
         $new->route = $route;
 
+        $new = $new->withAttributes($route->getVariables());
+
         return $new;
     }
 

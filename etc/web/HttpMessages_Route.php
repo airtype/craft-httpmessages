@@ -32,11 +32,12 @@ class HttpMessages_Route
      * @param string $pattern Pattern
      * @param array  $config  Config
      */
-    public function __construct($method, $pattern, array $middleware = [])
+    public function __construct($method, $pattern, array $middleware = [], array $variables = [])
     {
         $this->method     = $method;
         $this->pattern    = $pattern;
         $this->middleware = $middleware;
+        $this->variables  = $variables;
     }
 
     /**
@@ -77,6 +78,16 @@ class HttpMessages_Route
     public function setMiddleware(array $middleware)
     {
         $this->middleware = $middleware;
+    }
+
+    /**
+     * Get Variables
+     *
+     * @return array Variables
+     */
+    public function getVariables()
+    {
+        return $this->variables;
     }
 
 }
