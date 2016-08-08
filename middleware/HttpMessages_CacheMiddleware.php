@@ -12,14 +12,60 @@ class HttpMessages_CacheMiddleware
      *
      * @var HttpMessages_ConfigCollection
      */
-    public $config;
+    protected $config;
+
+    /**
+     * Duration
+     *
+     * @var integer
+     */
+    protected $duration;
+
+    /**
+     * Enabled
+     *
+     * @var bool
+     */
+    protected $enabled;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->config = craft()->httpMessages_config->get('cache', 'middleware');
+        $config = craft()->httpMessages_config->get('cache', 'middleware');
+
+        if ($duration = $config->get('defaultCacheDuration')) {
+            $this->setDuration($duration);
+        }
+
+        if ($enabled = $config->get('enabled')) {
+            $this->setEnabled($enabled);
+        }
+    }
+
+    /**
+     * Set Duration
+     *
+     * @param integer $duration Duration
+     */
+    public function setDuration($duration)
+    {
+        $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * Set Enabled
+     *
+     * @param bool $enabled Enabled
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
     }
 
     /**
@@ -33,13 +79,13 @@ class HttpMessages_CacheMiddleware
      */
     public function __invoke(Request $request, Response $response, callable $next)
     {
-        if (!$this->config->get('enabled')) {
+        if (!$this->enabled) {
             $response = $next($request, $response);
 
             return $response;
         }
 
-        $cache_duration = $this->getCacheDuration($request);
+        $cache_duration = $this->duration;
         $cache_key = $this->getCacheKey($request, $cache_duration);
 
         if ($cached = craft()->cache->get($cache_key)) {
@@ -51,22 +97,6 @@ class HttpMessages_CacheMiddleware
         $this->cacheResponse($response, $cache_key, $cache_duration);
 
         return $response;
-    }
-
-    /**
-     * Get Cache Duration
-     *
-     * @param Request $request Request
-     *
-     * @return int Cache Duration
-     */
-    private function getCacheDuration(Request $request)
-    {
-        if ($duration = $request->getRoute()->getMiddlewareVariable('duration', 'cache')) {
-            return $duration;
-        }
-
-        return $duration = $this->config->get('defaultCacheDuration');
     }
 
     /**

@@ -51,7 +51,7 @@ class HttpMessagesPlugin extends BasePlugin
      */
     public function registerSiteRoutes()
     {
-        $routes = craft()->httpMessages_routes->getRoutes();
+        $routes = craft()->httpMessages_routes->getCraftRoutes();
 
         return $routes;
     }

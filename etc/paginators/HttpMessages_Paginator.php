@@ -64,15 +64,21 @@ class HttpMessages_Paginator implements PaginatorInterface
 
     /**
      * Constructor
-     *
-     * @param Criteria $criteria
-     *
-     * @return void
      */
-    public function __construct(ElementCriteriaModel $criteria)
+    public function __construct()
     {
         $this->config = craft()->httpMessages_config->get('fractal', 'middleware');
+    }
 
+    /**
+     * Set Criteria
+     *
+     * @param ElementCriteriaModel $criteria Criteria
+     *
+     * @return HttpMessages_Paginator
+     */
+    public function setCriteria(ElementCriteriaModel $criteria)
+    {
         $this->limit = $criteria->limit;
 
         $this->count = $criteria->count();
@@ -86,6 +92,8 @@ class HttpMessages_Paginator implements PaginatorInterface
         }
 
         $this->last_page = ceil($criteria->total() / $this->limit);
+
+        return $this;
     }
 
     /**

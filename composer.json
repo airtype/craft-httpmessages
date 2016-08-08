@@ -13,11 +13,10 @@
     "minimum-stability": "dev",
     "require": {
         "composer/installers": "*",
-        "fzaninotto/Streamer": "^0.0.1",
         "relay/relay": "~1.0",
         "respect/validation": "^1.0",
         "league/fractal": "^0.13.0",
-        "league/uri": "^4.0",
-        "psr/http-message": "^1.0"
+        "zendframework/zend-diactoros": "^1.3",
+        "oscarotero/psr7-middlewares": "^3.16"
     }
 }

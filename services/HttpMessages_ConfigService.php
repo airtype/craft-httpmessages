@@ -25,9 +25,9 @@ class HttpMessages_ConfigService extends BaseApplicationComponent
      */
     public function loadConfigFiles()
     {
-        $this->routes = $this->loadRouteConfigs();
-
         $this->middleware = $this->loadMiddlewareConfigs();
+
+        $this->routes = $this->loadRouteConfigs();
     }
 
     /**
@@ -37,12 +37,15 @@ class HttpMessages_ConfigService extends BaseApplicationComponent
      */
     private function loadRouteConfigs()
     {
+        // Load routes found within the `craft/plugins/etc/config/routes`
         $defaultRouteConfigs = $this->loadConfigsFromDirectory(dirname(__FILE__) . '/../etc/config/routes');
 
+        // Load routes found within the `craft/config/httpmessages/routes`
         $userRouteConfigs = $this->loadConfigsFromDirectory(CRAFT_CONFIG_PATH . 'httpmessages/routes');
 
         $mergedConfigs = \CMap::mergeArray($defaultRouteConfigs, $userRouteConfigs);
 
+        // Plugins can register routes. Load any routes from plugins `craft/plugins/*/routes`
         foreach (craft()->plugins->call('registerHttpMessagesApplicationHandle') as $plugin => $application) {
             $applicationRoutes = $this->loadConfigsFromDirectory(CRAFT_CONFIG_PATH . $application . '/routes');
 
@@ -166,6 +169,16 @@ class HttpMessages_ConfigService extends BaseApplicationComponent
     public function getRoutes()
     {
         return $this->routes;
+    }
+
+    /**
+     * Get Middleware
+     *
+     * @return array Middleware
+     */
+    public function getMiddleware()
+    {
+        return $this->middleware;
     }
 
 }
