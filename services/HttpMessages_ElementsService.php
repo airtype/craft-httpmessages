@@ -93,14 +93,16 @@ class HttpMessages_ElementsService extends BaseApplicationComponent
     /**
      * Save Element
      *
-     * @param array $params Parameters
+     * @param BaseElementModel $model      Model
+     * @param BaseRecord       $record     Record
+     * @param array            $attributes Attributes
      *
      * @return BaseElementModel $model
      */
     public function saveElement(BaseElementModel $model, BaseRecord $record, array $attributes = [])
     {
         if (!empty($attributes)) {
-            $model->populateModel($attributes);
+            $model->setAttributes($attributes);
 
             $record->setAttributes($attributes);
         }
